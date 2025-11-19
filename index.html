@@ -163,20 +163,49 @@
             });
         }
 
-        function checkAnswer(selectedOption, button) {
-            const currentQuestion = sessionQuestions[currentQuestionIndex];
-            const correct = selectedOption === currentQuestion.answer;
+function checkAnswer(selectedOption, button) {
+    const currentQuestion = sessionQuestions[currentQuestionIndex];
+    const correct = selectedOption === currentQuestion.answer;
 
-            Array.from(document.getElementById('options-container').children)
-                .forEach(btn => btn.disabled = true);
+    // 停用所有按鈕
+    Array.from(document.getElementById('options-container').children)
+        .forEach(btn => btn.disabled = true);
 
-            if (correct) score++;
+    // 顯示 Modal
+    const modal = document.getElementById("message-modal");
+    const modalTitle = document.getElementById("modal-title");
+    const modalMessage = document.getElementById("modal-message");
 
-            setTimeout(() => {
-                currentQuestionIndex++;
-                loadQuestion();
-            }, 800);
-        }
+    if (correct) {
+        score++;
+        modalTitle.textContent = "恭喜！";
+        modalTitle.classList.remove("text-red-600");
+        modalTitle.classList.add("text-green-600");
+        modalMessage.textContent = "答案正確！";
+    } else {
+        modalTitle.textContent = "錯誤";
+        modalTitle.classList.remove("text-green-600");
+        modalTitle.classList.add("text-red-600");
+        modalMessage.textContent = `正確答案是：${currentQuestion.answer}`;
+
+        // 正確答案按鈕變色
+        Array.from(document.getElementById('options-container').children).forEach(btn => {
+            if (btn.textContent === currentQuestion.answer) {
+                btn.classList.add("bg-green-500", "text-white");
+            }
+        });
+    }
+
+    modal.classList.remove("hidden");
+
+    // 使用者按下「確定」後才進下一題
+    const closeBtn = modal.querySelector("button");
+    closeBtn.onclick = () => {
+        modal.classList.add("hidden");
+        currentQuestionIndex++;
+        loadQuestion();
+    };
+}
 
         function showResult() {
             const end = new Date();
@@ -224,3 +253,4 @@
     </script>
 </body>
 </html>
+
