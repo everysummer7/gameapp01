@@ -8,237 +8,250 @@
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
-    <div id="app" class="w-full max-w-md bg-white rounded-xl shadow-2xl p-6 md:p-8">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6 border-b pb-3">
-            圖片快問快答
-        </h1>
+<div id="app" class="w-full max-w-md bg-white rounded-xl shadow-2xl p-6 md:p-8">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-6 border-b pb-3">
+        圖片快問快答
+    </h1>
 
-        <!-- 工號 + 廠區輸入畫面 -->
-        <div id="id-container" class="text-center">
+    <!-- 工號 + 廠區輸入畫面 -->
+    <div id="id-container" class="text-center">
 
-            <h2 class="text-2xl font-bold text-gray-700 mb-4">請選擇廠區</h2>
+        <h2 class="text-2xl font-bold text-gray-700 mb-4">請選擇廠區</h2>
 
-            <div class="flex justify-around mb-6">
-                <label><input type="radio" name="site" value="BMC" class="mr-2">BMC</label>
-                <label><input type="radio" name="site" value="BML" class="mr-2">BML</label>
-                <label><input type="radio" name="site" value="BMY" class="mr-2">BMY</label>
-            </div>
-
-            <h2 class="text-2xl font-bold text-gray-700 mb-4">請輸入您的工號</h2>
-            <input id="employee-id" type="number"
-                class="border border-gray-300 rounded-lg p-3 w-full mb-4 text-center"
-                placeholder="僅限數字" required />
-
-            <button onclick="startQuiz()" 
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">
-                開始遊戲
-            </button>
+        <div class="flex justify-around mb-6">
+            <label><input type="radio" name="site" value="BMC" class="mr-2">BMC</label>
+            <label><input type="radio" name="site" value="BML" class="mr-2">BML</label>
+            <label><input type="radio" name="site" value="BMY" class="mr-2">BMY</label>
         </div>
 
-        <!-- Quiz 介面 -->
-        <div id="quiz-container" class="hidden">
-            <div class="mb-6 rounded-lg overflow-hidden border border-gray-200 shadow-lg">
-                <img id="question-image" src="" class="w-full h-48 object-cover bg-gray-100" />
-            </div>
-            <p id="question-text" class="text-xl font-semibold text-gray-700 mb-4"></p>
-            <div class="text-sm text-gray-500 mb-6 flex justify-between">
-                <span id="progress-text">問題 1 / 5</span>
-                <span id="score-text">分數: 0</span>
-            </div>
-            <div id="options-container" class="space-y-4"></div>
-        </div>
+        <h2 class="text-2xl font-bold text-gray-700 mb-4">請輸入您的工號</h2>
+        <input id="employee-id" type="number"
+            class="border border-gray-300 rounded-lg p-3 w-full mb-4 text-center"
+            placeholder="僅限數字" required />
 
-        <!-- 結果畫面 -->
-        <div id="result-container" class="hidden text-center">
-            <h2 id="final-message" class="text-3xl font-bold text-blue-600 mb-4"></h2>
-            <p id="final-score-text" class="text-xl text-gray-700 mb-2"></p>
-            <p id="time-spent-text" class="text-lg font-medium text-gray-600 mb-8"></p>
-
-            <button onclick="resetQuiz()" 
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg">
-                重新開始測驗
-            </button>
-        </div>
+        <button onclick="startQuiz()" 
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">
+            開始遊戲
+        </button>
     </div>
 
-    <!-- Netlify 上傳表單 -->
-    <form name="quiz-results" netlify netlify-honeypot="bot-field" hidden>
-        <input type="text" name="site">
-        <input type="text" name="employee_id">
-        <input type="number" name="score">
-        <input type="number" name="time_spent">
-        <input type="text" name="timestamp">
-        <input type="text" name="ip">
-    </form>
-
-    <!-- 訊息彈跳視窗 -->
-    <div id="message-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-xs">
-            <h3 id="modal-title" class="text-xl font-bold mb-3 text-center"></h3>
-            <p id="modal-message" class="text-gray-700 mb-4 text-center"></p>
-            <button id="modal-ok" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg">
-                確定
-            </button>
+    <!-- Quiz 介面 -->
+    <div id="quiz-container" class="hidden">
+        <div class="mb-6 rounded-lg overflow-hidden border border-gray-200 shadow-lg">
+            <img id="question-image" src="" class="w-full h-48 object-cover bg-gray-100" />
         </div>
+        <p id="question-text" class="text-xl font-semibold text-gray-700 mb-4"></p>
+        <div class="text-sm text-gray-500 mb-6 flex justify-between">
+            <span id="progress-text">問題 1 / 5</span>
+            <span id="score-text">分數: 0</span>
+        </div>
+        <div id="options-container" class="space-y-4"></div>
     </div>
 
-    <script>
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
+    <!-- 結果畫面 -->
+    <div id="result-container" class="hidden text-center">
+        <h2 id="final-message" class="text-3xl font-bold text-blue-600 mb-4"></h2>
+        <p id="final-score-text" class="text-xl text-gray-700 mb-2"></p>
+        <p id="time-spent-text" class="text-lg font-medium text-gray-600 mb-8"></p>
+
+        <button onclick="resetQuiz()" 
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg">
+            重新開始測驗
+        </button>
+    </div>
+</div>
+
+<!-- Netlify 隱藏表單 -->
+<form name="quiz-results" netlify netlify-honeypot="bot-field" hidden>
+    <input type="text" name="site">
+    <input type="text" name="employee_id">
+    <input type="number" name="score">
+    <input type="number" name="time_spent">
+    <input type="text" name="timestamp">
+    <input type="text" name="ip">
+</form>
+
+<!-- 訊息彈跳視窗 -->
+<div id="message-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-xs">
+        <h3 id="modal-title" class="text-xl font-bold mb-3 text-center"></h3>
+        <p id="modal-message" class="text-gray-700 mb-4 text-center"></p>
+        <button id="modal-ok" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg">
+            確定
+        </button>
+    </div>
+</div>
+
+<script>
+    function shuffleArray(array) {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+    }
+
+    const baseQuestions = [
+        { q: "以下照片沒有什麼缺失？", img: "https://www.ilosh.gov.tw/media/3hrj2lrs/3.jpg", opts: ["未戴安全帽", "未穿著背負式安全帶", "未穿著上衣", "施工未站立於平台"], ans: "未戴安全帽" },
+        { q: "以下照片沒有什麼缺失？", img: "https://www.ilosh.gov.tw/media/2tlp5l4z/4.jpg", opts: ["未戴安全帽", "未穿著背負式安全帶", "未穿著安全鞋", "無缺失"], ans: "無缺失" }
+    ];
+
+    const fullQuizData = [];
+    for (let i = 0; i < 50; i++) {
+        const base = baseQuestions[i % baseQuestions.length];
+        fullQuizData.push({
+            question: `[第 ${i + 1} 題] ${base.q}`,
+            image: base.img,
+            options: [...base.opts],
+            answer: base.ans
+        });
+    }
+
+    let siteValue = null;
+    let employeeId = null;
+    let currentQuestionIndex = 0;
+    let score = 0;
+    const QUESTIONS_PER_SESSION = 5;
+    let sessionQuestions = [];
+    let startTime = null;
+
+    function startQuiz() {
+        const siteRadio = document.querySelector("input[name='site']:checked");
+        const idValue = document.getElementById('employee-id').value.trim();
+
+        if (!siteRadio) return alert("請選擇廠區");
+        if (!idValue || isNaN(idValue)) return alert("請輸入有效工號");
+
+        siteValue = siteRadio.value;
+        employeeId = idValue;
+
+        document.getElementById('id-container').classList.add('hidden');
+        resetQuiz();
+    }
+
+    function loadQuestion() {
+        if (currentQuestionIndex >= QUESTIONS_PER_SESSION) {
+            showResult();
+            return;
         }
 
-        const baseQuestions = [
-            { q: "以下照片沒有什麼缺失？", img: "https://www.ilosh.gov.tw/media/3hrj2lrs/3.jpg", opts: ["未戴安全帽", "未穿著背負式安全帶", "未穿著上衣", "施工未站立於平台"], ans: "未戴安全帽" },
-            { q: "以下照片沒有什麼缺失？", img: "https://www.ilosh.gov.tw/media/2tlp5l4z/4.jpg", opts: ["未戴安全帽", "未穿著背負式安全帶", "未穿著安全鞋", "無缺失"], ans: "無缺失" }
-        ];
+        const q = sessionQuestions[currentQuestionIndex];
+        const shuffled = shuffleArray(q.options);
 
-        const fullQuizData = [];
-        for (let i = 0; i < 50; i++) {
-            const base = baseQuestions[i % baseQuestions.length];
-            fullQuizData.push({
-                question: `[第 ${i + 1} 題] ${base.q}`,
-                image: base.img,
-                options: [...base.opts],
-                answer: base.ans
+        document.getElementById('question-text').textContent =
+            `${currentQuestionIndex + 1}. ${q.question}`;
+        document.getElementById('question-image').src = q.image;
+        document.getElementById('progress-text').textContent =
+            `問題 ${currentQuestionIndex + 1} / ${QUESTIONS_PER_SESSION}`;
+        document.getElementById('score-text').textContent = `分數: ${score}`;
+
+        const opt = document.getElementById('options-container');
+        opt.innerHTML = '';
+
+        shuffled.forEach(option => {
+            const btn = document.createElement('button');
+            btn.textContent = option;
+            btn.className = 'w-full bg-indigo-500 text-white text-lg font-semibold py-3 rounded-lg';
+            btn.onclick = () => checkAnswer(option, btn);
+            opt.appendChild(btn);
+        });
+    }
+
+    function showModal(title, message, success = true) {
+        const modal = document.getElementById("message-modal");
+        const modalTitle = document.getElementById("modal-title");
+        const modalMessage = document.getElementById("modal-message");
+
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+
+        modalTitle.classList.remove("text-green-600", "text-red-600");
+        modalTitle.classList.add(success ? "text-green-600" : "text-red-600");
+
+        modal.classList.remove("hidden");
+    }
+
+    document.getElementById("modal-ok").onclick = function () {
+        document.getElementById("message-modal").classList.add("hidden");
+        currentQuestionIndex++;
+        loadQuestion();
+    };
+
+    function checkAnswer(selectedOption, button) {
+        const optionsContainer = document.getElementById('options-container');
+        const currentQuestion = sessionQuestions[currentQuestionIndex];
+        const isCorrect = selectedOption === currentQuestion.answer;
+
+        Array.from(optionsContainer.children).forEach(btn => btn.disabled = true);
+
+        if (isCorrect) {
+            score++;
+            button.classList.add('bg-green-500');
+            showModal("恭喜！", "答案正確！", true);
+        } else {
+            button.classList.add('bg-red-500');
+            Array.from(optionsContainer.children).forEach(btn => {
+                if (btn.textContent === currentQuestion.answer) btn.classList.add("bg-green-500");
             });
+            showModal("錯誤", `正確答案是：${currentQuestion.answer}`, false);
         }
+    }
 
-        let siteValue = null;
-        let employeeId = null;
-        let currentQuestionIndex = 0;
-        let score = 0;
-        const QUESTIONS_PER_SESSION = 5;
-        let sessionQuestions = [];
-        let startTime = null;
+    function formatTimestampASCII() {
+        const now = new Date();
+        return (
+            now.getFullYear() + "-" +
+            String(now.getMonth() + 1).padStart(2, "0") + "-" +
+            String(now.getDate()).padStart(2, "0") + " " +
+            String(now.getHours()).padStart(2, "0") + ":" +
+            String(now.getMinutes()).padStart(2, "0") + ":" +
+            String(now.getSeconds()).padStart(2, "0")
+        );
+    }
 
-        function startQuiz() {
-            const siteRadio = document.querySelector("input[name='site']:checked");
-            const idValue = document.getElementById('employee-id').value.trim();
+    function showResult() {
+        const end = new Date();
+        const secondsUsed = Math.round((end - startTime) / 1000);
 
-            if (!siteRadio) return alert("請選擇廠區");
-            if (!idValue || isNaN(idValue)) return alert("請輸入有效工號");
+        document.getElementById('quiz-container').classList.add('hidden');
+        document.getElementById('result-container').classList.remove('hidden');
 
-            siteValue = siteRadio.value;
-            employeeId = idValue;
+        document.getElementById('final-message').textContent = "測驗完成！";
+        document.getElementById('final-score-text').textContent = `最終分數：${score}`;
+        document.getElementById('time-spent-text').textContent = `使用秒數：${secondsUsed} 秒`;
 
-            document.getElementById('id-container').classList.add('hidden');
-            resetQuiz();
-        }
+        const form = document.forms['quiz-results'];
+        form.site.value = siteValue;
+        form.employee_id.value = employeeId;
+        form.score.value = score;
+        form.time_spent.value = secondsUsed;
+        form.timestamp.value = formatTimestampASCII();
 
-        function loadQuestion() {
-            if (currentQuestionIndex >= QUESTIONS_PER_SESSION) {
-                showResult();
-                return;
-            }
-
-            const q = sessionQuestions[currentQuestionIndex];
-            const shuffledOptions = shuffleArray(q.options);
-
-            document.getElementById('question-text').textContent =
-                `${currentQuestionIndex + 1}. ${q.question}`;
-            document.getElementById('question-image').src = q.image;
-            document.getElementById('progress-text').textContent =
-                `問題 ${currentQuestionIndex + 1} / ${QUESTIONS_PER_SESSION}`;
-            document.getElementById('score-text').textContent = `分數: ${score}`;
-
-            const opt = document.getElementById('options-container');
-            opt.innerHTML = '';
-
-            shuffledOptions.forEach(option => {
-                const btn = document.createElement('button');
-                btn.textContent = option;
-                btn.className = 'w-full bg-indigo-500 text-white text-lg font-semibold py-3 rounded-lg';
-                btn.onclick = () => checkAnswer(option, btn);
-                opt.appendChild(btn);
+        fetch("https://api.ipify.org?format=json")
+            .then(r => r.json())
+            .then(data => form.ip.value = data.ip)
+            .finally(() => {
+                fetch("/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(new FormData(form)).toString(),
+                });
             });
-        }
+    }
 
-        function showModal(title, message, success = true) {
-            const modal = document.getElementById("message-modal");
-            const modalTitle = document.getElementById("modal-title");
-            const modalMessage = document.getElementById("modal-message");
+    function resetQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        sessionQuestions = shuffleArray(fullQuizData).slice(0, QUESTIONS_PER_SESSION);
 
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
+        startTime = new Date();
+        document.getElementById('quiz-container').classList.remove('hidden');
+        document.getElementById('result-container').classList.add('hidden');
 
-            modalTitle.classList.remove("text-green-600", "text-red-600");
-            modalTitle.classList.add(success ? "text-green-600" : "text-red-600");
+        loadQuestion();
+    }
+</script>
 
-            modal.classList.remove("hidden");
-        }
-
-        document.getElementById("modal-ok").onclick = function () {
-            document.getElementById("message-modal").classList.add("hidden");
-            currentQuestionIndex++;
-            loadQuestion();
-        };
-
-        function checkAnswer(selectedOption, button) {
-            const optionsContainer = document.getElementById('options-container');
-            const currentQuestion = sessionQuestions[currentQuestionIndex];
-            const isCorrect = selectedOption === currentQuestion.answer;
-
-            Array.from(optionsContainer.children).forEach(btn => btn.disabled = true);
-
-            if (isCorrect) {
-                score++;
-                button.classList.add('bg-green-500');
-                showModal("恭喜！", "答案正確！", true);
-            } else {
-                button.classList.add('bg-red-500');
-                Array.from(optionsContainer.children).forEach(btn => {
-                    if (btn.textContent === currentQuestion.answer) btn.classList.add("bg-green-500");
-                });
-                showModal("錯誤", `正確答案是：${currentQuestion.answer}`, false);
-            }
-        }
-
-        function showResult() {
-            const end = new Date();
-            const secondsUsed = Math.round((end - startTime) / 1000);
-
-            document.getElementById('quiz-container').classList.add('hidden');
-            document.getElementById('result-container').classList.remove('hidden');
-
-            document.getElementById('final-message').textContent = "測驗完成！";
-            document.getElementById('final-score-text').textContent = `最終分數：${score}`;
-            document.getElementById('time-spent-text').textContent = `使用秒數：${secondsUsed} 秒`;
-
-            const form = document.forms['quiz-results'];
-            form.site.value = siteValue;
-            form.employee_id.value = employeeId;
-            form.score.value = score;
-            form.time_spent.value = secondsUsed;
-            form.timestamp.value = new Date().toLocaleString("zh-TW");
-
-            fetch("https://api.ipify.org?format=json")
-                .then(r => r.json())
-                .then(data => form.ip.value = data.ip)
-                .finally(() => {
-                    fetch("/", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                        body: new URLSearchParams(new FormData(form)).toString(),
-                    });
-                });
-        }
-
-        function resetQuiz() {
-            currentQuestionIndex = 0;
-            score = 0;
-            sessionQuestions = shuffleArray(fullQuizData).slice(0, QUESTIONS_PER_SESSION);
-
-            startTime = new Date();
-            document.getElementById('quiz-container').classList.remove('hidden');
-            document.getElementById('result-container').classList.add('hidden');
-
-            loadQuestion();
-        }
-    </script>
 </body>
 </html>
