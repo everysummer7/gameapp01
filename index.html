@@ -228,6 +228,9 @@
         document.getElementById('result-container').classList.remove('hidden');
 
         document.getElementById('final-message').textContent = "測驗完成！";
+            // 新增：顯示廠區、工號
+    document.getElementById('final-site').textContent = `廠區：${siteValue}`;
+    document.getElementById('final-id').textContent = `工號：${employeeId}`;
         document.getElementById('final-score-text').textContent = `最終分數：${score}`;
         document.getElementById('time-spent-text').textContent = `使用秒數：${secondsUsed} 秒`;
 
@@ -265,5 +268,6 @@
 
 </body>
 </html>
+
 
 
