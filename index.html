@@ -102,22 +102,68 @@
         return newArray;
     }
 
-    const baseQuestions = [
-        { q: "以下照片沒有什麼缺失？", img: "https://www.ilosh.gov.tw/media/3hrj2lrs/3.jpg", opts: ["未戴安全帽", "未穿著背負式安全帶", "未穿著上衣", "施工未站立於平台"], ans: "未戴安全帽" },
-        { q: "以下照片沒有什麼缺失？", img: "https://www.ilosh.gov.tw/media/2tlp5l4z/4.jpg", opts: ["未戴安全帽", "未穿著背負式安全帶", "未穿著安全鞋", "無缺失"], ans: "無缺失" }
-    ];
-
-    const fullQuizData = [];
-    for (let i = 0; i < 50; i++) {
-        const base = baseQuestions[i % baseQuestions.length];
-        fullQuizData.push({
-            question: `[第 ${i + 1} 題] ${base.q}`,
-            image: base.img,
-            options: [...base.opts],
-            answer: base.ans
-        });
-    }
-
+const fullQuizData = [
+  {
+    question: "請問照片中有什麼缺失？",
+    image: "https://photos.fife.usercontent.google.com/pw/ADCreHeidkStm0_1PxF8jzYfqah_jpVuRDNFJ5vMQtMcGwePyxceDK22YMqAO38neSWGDRbMpGvYjIEsN0o3LVaRbTIvgCOdNbaque4UYOy3dlkhO_6LQynCfHuWgJ0C1shZVvm_P6WZ1Ft8VdFLgPqRvG0=w1864-h932-s-no-gm?authuser=0",
+    options: ["擠壓瓶GHS髒污無法辨識", "滅火器遭阻擋", "插座髒污", "電器合格標籤過期"],
+    answer: "滅火器遭阻擋"
+  },
+  {
+    question: "請問照片中有什麼缺失？",
+    image: "https://photos.fife.usercontent.google.com/pw/ADCreHdExb_CMNVKKEkLBGLoTV97Kc8it0b0OPJzZLUF84x_I19MjY41vzv308QVbqpjbAdBfQnd5x3KizZuBTwE0kkdG-i1VMRE5vaI9opQXalmh_Tz5bgP4y4xabbbcnE7gMIEsAJcbbbYJiArP_H4BL4=w1864-h932-s-no-gm?authuser=0",
+    options: ["擠壓瓶GHS髒污無法辨識", "滅火器遭阻擋", "插座髒污", "電器合格標籤過期"],
+    answer: "擠壓瓶GHS髒污無法辨識"
+  },
+  {
+    question: "請問照片中有什麼缺失？",
+    image: "https://photos.fife.usercontent.google.com/pw/ADCreHcJdpWA_qE0Xdij_3fmpRL_nRw3lROFV14RtLoMbYLS8VoedYVH6Qkb8VZGwYjn3voC0dgzTRHjO6E2G3gvZvAP0FMmZ5etqdNPYoxPNJSxqrDqaC_JXRwVPYdeQH-RlSj6-fZSxlN6oVSJvSrr6r4=w1864-h932-s-no-gm?authuser=0",
+    options: ["擠壓瓶GHS髒污無法辨識", "滅火器遭阻擋", "插座髒污", "電器合格標籤過期"],
+    answer: "電器合格標籤過期"
+  },
+  {
+    question: "請問照片中有什麼缺失？",
+    image: "https://photos.fife.usercontent.google.com/pw/ADCreHcxg7SNanloFH-3F4nSgEULh-o1RvNTJM1PzzbS-aZ_cGhAmP-MLs1n7q9jj5GhOhevaeh7vexeJmk15C866I5TKPb6O9T19eUbA_Bw5WoA4bBRp2qkVvloKp4kSss6mRlxY1qtKYu-arv4mxL6Py0=w1864-h932-s-no-gm?authuser=0",
+    options: ["擠壓瓶GHS髒污無法辨識", "滅火器遭阻擋", "插座髒污", "電器合格標籤過期"],
+    answer: "插座髒污"
+  },
+  {
+    question: "請問照片中有什麼缺失？",
+    image: "https://photos.fife.usercontent.google.com/pw/ADCreHchv4TnAVrM1M93naaXh1kz2b7wtAbdpkMLpOf5qlZxj2HZVA7XmxKugmZZUqg0xkHTa7ObXJSKn7ZCIqRo1RFUJ3anWYnJ0JQv1179CZAjTt-r0JhtGmE1Su6GdAKYuqJJNE_oR7xSPHlCJkGADzk=w1864-h932-s-no-gm?authuser=0",
+    options: ["鋼瓶不正確固定", "鋼瓶未使用未蓋鋼瓶帽", "鋼瓶SDS過期", "無缺失"],
+    answer: "鋼瓶不正確固定"
+  },
+  {
+    question: "請問照片中有什麼缺失？",
+    image: "https://photos.fife.usercontent.google.com/pw/ADCreHf2G4S9iKHqMpb3VILBJv6lxFZbHljgdrPqf1ZTf3o6MPHp9KE3r5N7gYSotQEhNTxiLjaaYpMPTXljuQ5L1Dwo9c3TkKNWVOiKmiHkFuwOEzOFUC2ApWpXEaknu1C7xht56t9FbUzG9zDa13oL2JM=w1864-h932-s-no-gm?authuser=0",
+    options: ["鋼瓶不正確固定", "鋼瓶未使用未蓋鋼瓶帽", "鋼瓶SDS過期", "無缺失"],
+    answer: "鋼瓶未使用未蓋鋼瓶帽"
+  },
+  {
+    question: "請問照片中有什麼缺失？",
+    image: "https://photos.fife.usercontent.google.com/pw/ADCreHezz0ue3S0tn_0hm-k7f5_HYgxeuYxE18UEp2ENXr9K0CNmOGOIKZMwbVYy3w1fMxL0FzAW_ToFxgrTH-4VE8KrW5rB1plFmzBPTAnzIKkO5gq8pBPqlbOYelmkI4mPLP3oR_M-8au9c-rTyGy4gCM=w1864-h932-s-no-gm?authuser=0",
+    options: ["緊急出口動線遭阻", "緊急出口燈未亮", "緊急出口未標示", "無缺失"],
+    answer: "緊急出口動線遭阻"
+  },
+  {
+    question: "請問照片中有什麼缺失？",
+    image: "https://photos.fife.usercontent.google.com/pw/ADCreHd5V7oqHat5Ff1bzH4UzCn4TQJLP3GXZ2wtvA4PaEcXKDDfFjYmJx4K6ieOyMfWvapJGox6ETmBAHxtG686z3cjgKf3vzab-hUj27xXh40euufkM8JbTgOxiVeDwFbwNyChrPmL8NLvJr_KbhZZwGo=w1864-h932-s-no-gm?authuser=0",
+    options: ["緊急出口動線遭阻", "緊急出口燈未亮", "緊急出口未標示", "無缺失"],
+    answer: "緊急出口燈未亮"
+  },
+  {
+    question: "請問照片中有什麼缺失？",
+    image: "https://photos.fife.usercontent.google.com/pw/ADCreHcLPxOu2DcBbpYpM4J7MAZFdECOldy6SrRAIxnOOzKvH--HQ8dMGVkgLPWhaLJHaQMhJAuebjkO8zySkIhFDEeKITJ50Igqa2zCtdzBH4THAeDdCN8rgF96cX2k19fJlOj4fzQvGr3L-aBXV4PYt9c=w1864-h932-s-no-gm?authuser=0",
+    options: ["緊急沖身區故障", "緊急沖身區不應堆放雜物", "緊急沖身區未點檢", "無缺失"],
+    answer: "緊急沖身區不應堆放雜物"
+  },
+  {
+    question: "請問照片中有什麼缺失？",
+    image: "https://photos.fife.usercontent.google.com/pw/ADCreHd0zZ0xdnc06JEMCDlupj3cPMFtC_1AhYCmoGQVVVUD5UxEhY2fks-e-iWcXn-2DqTdssRBHq2wTLHzv8mRkeV2pYvP0msDcph1wu6J41F5JHrbtf1lKZeW3uDPfJV-ptpSLZlYzFj1gnJ3v-mPm70=w1864-h932-s-no-gm?authuser=0",
+    options: ["緊急排煙裝置按鈕故障", "緊急排煙裝置按鈕遭阻擋", "緊急排煙裝置按鈕未設置", "無缺失"],
+    answer: "緊急排煙裝置按鈕遭阻擋"
+  },
+];
     let siteValue = null;
     let employeeId = null;
     let currentQuestionIndex = 0;
@@ -268,6 +314,7 @@
 
 </body>
 </html>
+
 
 
 
