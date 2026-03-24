@@ -356,7 +356,7 @@
         loadQuestion();
     };
 
-    function showResult() {
+function showResult() {
         const duration = Math.round((new Date() - startTime) / 1000);
         document.getElementById('quiz-container').classList.add('hidden');
         document.getElementById('result-container').classList.remove('hidden');
@@ -366,6 +366,21 @@
         document.getElementById('final-name').textContent = `姓名：${userName}`;
         document.getElementById('final-score-text').textContent = `最終得分：${score} / ${TOTAL_SESSIONS}`;
         document.getElementById('time-spent-text').textContent = `總共耗時：${duration} 秒`;
+
+        // --- 1. 定義 CSV 內容 (在此補上 headers 和 row) ---
+        const headers = ["廠區", "工號", "姓名", "得分", "耗時(秒)", "時間戳記"];
+        const row = [siteValue, employeeId, userName, score, duration, new Date().toLocaleString()];
+        
+        // 加上 \ufeff 修正亂碼
+        const csvContent = "\ufeff" + headers.join(",") + "\n" + row.join(",");
+
+        // --- 2. 執行下載動作 ---
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `測驗結果_${userName}.csv`;
+        link.click();
+        // ----------------------------------------------
 
         const form = document.forms['quiz-results'];
         form.site.value = siteValue;
