@@ -3,85 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>圖片快問快答 App</title>
+    <title>圖片快問快答 App - 點擊放大版</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.min.css">
+    <style>
+        /* 增加鼠標手勢，提醒使用者圖片可以點擊 */
+        #question-image { cursor: zoom-in; }
+    </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
 
 <div id="app" class="w-full max-w-md bg-white rounded-xl shadow-2xl p-6 md:p-8">
-<!-- 工號 + 廠區輸入畫面 -->
-<div id="id-container" class="text-center">
+    <div id="id-container" class="text-center">
+        <img src="https://lh3.googleusercontent.com/pw/AP1GczNLiF46UYA9jN8VsHkhzUGXxxv7iV4fvaOuyKCvK3BfuLlmIGci9lP-WfeC9Pum4VxcBJSBC4x7f_4ljR5Vs2XoKAXOYJy6tu-6FQGFby-HuLwh3RMWmNInKiIdYyx7oLBiAJeRFQCyOpjXiv1Y9HLO=w1657-h932-s-no?authuser=0"
+             class="w-full rounded-lg mb-6"
+             style="max-height: 200px; object-fit: cover;">
 
-    <!-- 新增的 1920x1080 圖片 -->
-    <img src="https://lh3.googleusercontent.com/pw/AP1GczNLiF46UYA9jN8VsHkhzUGXxxv7iV4fvaOuyKCvK3BfuLlmIGci9lP-WfeC9Pum4VxcBJSBC4x7f_4ljR5Vs2XoKAXOYJy6tu-6FQGFby-HuLwh3RMWmNInKiIdYyx7oLBiAJeRFQCyOpjXiv1Y9HLO=w1657-h932-s-no?authuser=0"
-         class="w-full rounded-lg mb-6"
-         style="max-height: 320px; object-fit: cover;">
-
-    <h2 class="text-2xl font-bold text-gray-700 mb-4">請選擇廠區</h2>
-
+        <h2 class="text-xl font-bold text-gray-700 mb-4">請選擇廠區</h2>
         <div class="flex justify-around mb-6">
-            <label><input type="radio" name="site" value="BMC" class="mr-2">BMC</label>
-            <label><input type="radio" name="site" value="BML" class="mr-2">BML</label>
-            <label><input type="radio" name="site" value="BMY" class="mr-2">BMY</label>
+            <label class="cursor-pointer"><input type="radio" name="site" value="BMC" class="mr-2">BMC</label>
+            <label class="cursor-pointer"><input type="radio" name="site" value="BML" class="mr-2">BML</label>
+            <label class="cursor-pointer"><input type="radio" name="site" value="BMY" class="mr-2">BMY</label>
         </div>
 
-        <h2 class="text-2xl font-bold text-gray-700 mb-4">請輸入您的工號</h2>
-        <input id="employee-id" type="number"
-            class="border border-gray-300 rounded-lg p-3 w-full mb-4 text-center"
-            placeholder="僅限數字" required />
+        <div class="space-y-4 mb-6">
+            <div>
+                <label class="block text-left text-sm font-medium text-gray-600 mb-1">工號</label>
+                <input id="employee-id" type="number"
+                    class="border border-gray-300 rounded-lg p-3 w-full text-center focus:ring-2 focus:ring-blue-500 outline-none"
+                    placeholder="請輸入工號數字" required />
+            </div>
+            <div>
+                <label class="block text-left text-sm font-medium text-gray-600 mb-1">姓名</label>
+                <input id="user-name" type="text"
+                    class="border border-gray-300 rounded-lg p-3 w-full text-center focus:ring-2 focus:ring-blue-500 outline-none"
+                    placeholder="請輸入您的姓名" required />
+            </div>
+        </div>
 
         <button onclick="startQuiz()" 
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
             開始遊戲
         </button>
     </div>
 
-    <!-- Quiz 介面 -->
     <div id="quiz-container" class="hidden">
-<div class="mb-6 rounded-lg border border-gray-200 shadow-lg">
-    <img id="question-image" src="" class="w-full object-contain bg-gray-100 max-h-96" />
-</div>
+        <div class="mb-4 rounded-lg border border-gray-200 shadow-lg overflow-hidden relative group">
+            <img id="question-image" src="" class="w-full object-contain bg-gray-100 max-h-80" onclick="openPhotoSwipe()" />
+            <div class="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded pointer-events-none">
+                🔍 點擊圖片放大查看
+            </div>
+        </div>
+        <div class="mb-2 text-blue-600 font-bold" id="question-number-display"></div>
         <p id="question-text" class="text-xl font-semibold text-gray-700 mb-4"></p>
-        <div class="text-sm text-gray-500 mb-6 flex justify-between">
-            <span id="progress-text">問題 1 / 5</span>
+        
+        <div class="text-sm text-gray-500 mb-6 flex justify-between border-t pt-4">
+            <span id="progress-text">問題 1 / 10</span>
             <span id="score-text">分數: 0</span>
         </div>
         <div id="options-container" class="space-y-4"></div>
     </div>
 
-    <!-- 結果畫面 -->
     <div id="result-container" class="hidden text-center">
-    <!-- 測驗完成頁面的圖片 -->
-    <img src="https://lh3.googleusercontent.com/pw/AP1GczNLiF46UYA9jN8VsHkhzUGXxxv7iV4fvaOuyKCvK3BfuLlmIGci9lP-WfeC9Pum4VxcBJSBC4x7f_4ljR5Vs2XoKAXOYJy6tu-6FQGFby-HuLwh3RMWmNInKiIdYyx7oLBiAJeRFQCyOpjXiv1Y9HLO=w1657-h932-s-no?authuser=0"
-         class="w-full rounded-lg mb-6"
-         style="max-height: 300px; object-fit: cover;">
+        <img src="https://lh3.googleusercontent.com/pw/AP1GczNLiF46UYA9jN8VsHkhzUGXxxv7iV4fvaOuyKCvK3BfuLlmIGci9lP-WfeC9Pum4VxcBJSBC4x7f_4ljR5Vs2XoKAXOYJy6tu-6FQGFby-HuLwh3RMWmNInKiIdYyx7oLBiAJeRFQCyOpjXiv1Y9HLO=w1657-h932-s-no?authuser=0"
+             class="w-full rounded-lg mb-6"
+             style="max-height: 200px; object-fit: cover;">
 
-    <h2 id="final-message" class="text-3xl font-bold text-blue-600 mb-4"></h2>
-        <h2 id="final-message" class="text-3xl font-bold text-blue-600 mb-4"></h2>
-            <!-- 新增：顯示廠區與工號 -->
-    <p id="final-site" class="text-lg text-gray-700 mb-1"></p>
-    <p id="final-id" class="text-lg text-gray-700 mb-4"></p>
-        <p id="final-score-text" class="text-xl text-gray-700 mb-2"></p>
-        <p id="time-spent-text" class="text-lg font-medium text-gray-600 mb-8"></p>
+        <h2 id="final-message" class="text-3xl font-bold text-blue-600 mb-4">測驗完成！</h2>
+        
+        <div class="bg-gray-50 rounded-xl p-4 mb-6 text-left space-y-2">
+            <p id="final-site" class="text-gray-700 font-medium"></p>
+            <p id="final-id" class="text-gray-700 font-medium"></p>
+            <p id="final-name" class="text-gray-700 font-medium"></p>
+            <p id="final-score-text" class="text-xl text-blue-700 font-bold pt-2 border-t"></p>
+            <p id="time-spent-text" class="text-sm text-gray-500"></p>
+        </div>
 
         <button onclick="resetQuiz()" 
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg">
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition">
             重新開始測驗
         </button>
     </div>
 </div>
 
-<!-- Netlify 隱藏表單 -->
 <form name="quiz-results" netlify netlify-honeypot="bot-field" hidden>
     <input type="text" name="site">
     <input type="text" name="employee_id">
+    <input type="text" name="user_name">
     <input type="number" name="score">
     <input type="number" name="time_spent">
     <input type="text" name="timestamp">
     <input type="text" name="ip">
 </form>
 
-<!-- 訊息彈跳視窗 -->
 <div id="message-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
     <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-xs">
         <h3 id="modal-title" class="text-xl font-bold mb-3 text-center"></h3>
@@ -92,200 +106,274 @@
     </div>
 </div>
 
+<script type="module">
+    import PhotoSwipeLightbox from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe-lightbox.esm.min.js';
+    window.openPhotoSwipe = function() {
+        const imgElement = document.getElementById('question-image');
+        if (!imgElement.src || imgElement.src.includes('profile/picture/0')) return;
+
+        const options = {
+            dataSource: [
+                {
+                    src: imgElement.src,
+                    width: 1200, // 這裡設定預期最大寬度
+                    height: 900,
+                }
+            ],
+            pswpModule: () => import('https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.esm.min.js')
+        };
+        const pswp = new PhotoSwipeLightbox(options);
+        pswp.init();
+        pswp.loadAndOpen(0);
+    };
+</script>
+
 <script>
-    function shuffleArray(array) {
-        const newArray = [...array];
-        for (let i = newArray.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-        }
-        return newArray;
+    // --- 題庫定義 (內容維持不變) ---
+    const fullQuizData = [];
+    // ... (此處省略您原本的 100 題資料，代碼中已包含)
+    for(let i = 1; i <= 100; i++) {
+        fullQuizData.push(
+            { id: 1, question: "請問照片中有什麼缺失？", image: "1.jpg", options: ["電線雜亂人員易絆倒跌倒", "地面濕滑人員易滑倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "電線雜亂人員易絆倒跌倒" },
+            { id: 2, question: "請問照片中有什麼缺失？", image: "2.jpg", options: ["地面濕滑人員易滑倒", "電線雜亂人員易絆倒跌倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "地面濕滑人員易滑倒" },
+            { id: 3, question: "請問照片中有什麼缺失？", image: "3.jpg", options: ["地面濕滑人員易滑倒", "電線雜亂人員易絆倒跌倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "地面濕滑人員易滑倒" },
+            { id: 4, question: "請問照片中有什麼缺失？", image: "4.jpg", options: ["電線雜亂人員易絆倒跌倒", "地面濕滑人員易滑倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "電線雜亂人員易絆倒跌倒" },
+            { id: 5, question: "請問照片中有什麼缺失？", image: "5.jpg", options: ["電線雜亂人員易絆倒跌倒", "地面濕滑人員易滑倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "電線雜亂人員易絆倒跌倒" },
+            { id: 6, question: "請問照片中有什麼缺失？", image: "6.jpg", options: ["地面突起物人員易絆倒跌倒", "地面濕滑人員易滑倒", "地面濕滑人員易滑倒", "無缺失"], answer: "地面突起物人員易絆倒跌倒" },
+            { id: 7, question: "請問照片中有什麼缺失？", image: "7.jpg", options: ["地面濕滑人員易滑倒", "電線雜亂人員易絆倒跌倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "地面濕滑人員易滑倒" },
+            { id: 8, question: "請問照片中有什麼缺失？", image: "8.jpg", options: ["地面突起物人員易絆倒跌倒", "地面濕滑人員易滑倒", "電線雜亂人員易絆倒跌倒", "無缺失"], answer: "地面突起物人員易絆倒跌倒" },
+            { id: 9, question: "請問照片中有什麼缺失？", image: "9.jpg", options: ["地面濕滑人員易滑倒", "電線雜亂人員易絆倒跌倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "地面濕滑人員易滑倒" },
+            { id: 10, question: "請問照片中有什麼缺失？", image: "10.jpg", options: ["地面濕滑人員易滑倒", "電線雜亂人員易絆倒跌倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "地面濕滑人員易滑倒" },
+            { id: 11, question: "請問照片中有什麼缺失？", image: "11.jpg", options: ["地面濕滑人員易滑倒", "電線雜亂人員易絆倒跌倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "地面濕滑人員易滑倒" },
+            { id: 12, question: "請問照片中有什麼缺失？", image: "12.jpg", options: ["雜物堆放人員易絆倒跌倒且影響逃生", "電線雜亂人員易絆倒跌倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "雜物堆放人員易絆倒跌倒且影響逃生" },
+            { id: 13, question: "請問照片中有什麼缺失？", image: "13.jpg", options: ["雜物堆放人員易絆倒跌倒且影響逃生", "電線雜亂人員易絆倒跌倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "雜物堆放人員易絆倒跌倒且影響逃生" },
+            { id: 14, question: "請問照片中有什麼缺失？", image: "14.jpg", options: ["雜物堆放人員易絆倒跌倒且影響逃生", "電線雜亂人員易絆倒跌倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "雜物堆放人員易絆倒跌倒且影響逃生" },
+            { id: 15, question: "請問照片中有什麼缺失？", image: "15.jpg", options: ["地面突起人員易絆倒跌倒", "地面濕滑人員易滑倒", "電線雜亂人員易絆倒跌倒", "無缺失"], answer: "地面突起人員易絆倒跌倒" },
+            { id: 16, question: "請問照片中有什麼缺失？", image: "16.jpg", options: ["雜物堆放人員易絆倒跌倒", "電線雜亂人員易絆倒跌倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "雜物堆放人員易絆倒跌倒" },
+            { id: 17, question: "請問照片中有什麼缺失？", image: "17.jpg", options: ["通道上出現簍空凹槽人員易踩空跌倒", "地面濕滑人員易滑倒", "電線雜亂人員易絆倒跌倒", "無缺失"], answer: "通道上出現簍空凹槽人員易踩空跌倒" },
+            { id: 18, question: "請問照片中有什麼缺失？", image: "18.jpg", options: ["地面濕滑人員易滑倒", "電線雜亂人員易絆倒跌倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "地面濕滑人員易滑倒" },
+            { id: 19, question: "請問照片中有什麼缺失？", image: "19.jpg", options: ["地面濕滑人員易滑倒", "電線雜亂人員易絆倒跌倒", "地面突起物人員易絆倒跌倒", "無缺失"], answer: "地面濕滑人員易滑倒" },
+            { id: 20, question: "請問照片中有什麼缺失？", image: "20.jpg", options: ["地面突起物人員易絆倒跌倒", "地面濕滑人員易滑倒", "電線雜亂人員易絆倒跌倒", "無缺失"], answer: "地面突起物人員易絆倒跌倒" },
+            { id: 21, question: "請問照片中有什麼缺失？", image: "21.jpg", options: ["延長線橫跨通道人員易絆倒跌倒", "延長線積塵", "不應使用多孔轉接", "插座護蓋脫落"], answer: "延長線橫跨通道人員易絆倒跌倒" },
+            { id: 22, question: "請問照片中有什麼缺失？", image: "22.jpg", options: ["電線橫跨通道人員易絆倒跌倒", "延長線積塵", "不應使用多孔轉接", "插座護蓋脫落"], answer: "電線橫跨通道人員易絆倒跌倒" },
+            { id: 23, question: "請問照片中有什麼缺失？", image: "23.jpg", options: ["插座超載風險", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "插座護蓋脫落"], answer: "插座超載風險" },
+            { id: 24, question: "請問照片中有什麼缺失？", image: "24.jpg", options: ["延長線積塵", "不應使用多孔轉接", "電線橫跨通道人員易絆倒跌倒", "插座護蓋脫落"], answer: "延長線積塵" },
+            { id: 25, question: "請問照片中有什麼缺失？", image: "25.jpg", options: ["插座超載風險", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "插座護蓋脫落"], answer: "插座超載風險" },
+            { id: 26, question: "請問照片中有什麼缺失？", image: "26.jpg", options: ["插座護蓋脫落", "延長線積塵", "不應使用多孔轉接", "電線橫跨通道人員易絆倒跌倒"], answer: "插座護蓋脫落" },
+            { id: 27, question: "請問照片中有什麼缺失？", image: "27.jpg", options: ["電線破損有漏電疑慮", "延長線積塵", "未張貼電器合格標籤", "插座護蓋脫落"], answer: "電線破損有漏電疑慮" },
+            { id: 28, question: "請問照片中有什麼缺失？", image: "28.jpg", options: ["電線破損有漏電疑慮", "延長線積塵", "未張貼電器合格標籤", "插座護蓋脫調"], answer: "電線破損有漏電疑慮" },
+            { id: 29, question: "請問照片中有什麼缺失？", image: "29.jpg", options: ["未張貼電器合格標籤", "無缺失", "電線橫跨通道人員易絆倒跌倒", "插座護蓋脫落"], answer: "未張貼電器合格標籤" },
+            { id: 30, question: "請問照片中有什麼缺失？", image: "30.jpg", options: ["插座護蓋脫落", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接"], answer: "插座護蓋脫落" },
+            { id: 31, question: "請問照片中有什麼缺失？", image: "31.jpg", options: ["電器合格標籤過期", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接"], answer: "電器合格標籤過期" },
+            { id: 32, question: "請問照片中有什麼缺失？", image: "32.jpg", options: ["電器合格標籤過期", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接"], answer: "電器合格標籤過期" },
+            { id: 33, question: "請問照片中有什麼缺失？", image: "33.jpg", options: ["未張貼電器合格標籤", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接"], answer: "未張貼電器合格標籤" },
+            { id: 34, question: "請問照片中有什麼缺失？", image: "34.jpg", options: ["插座異常凹陷", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接"], answer: "插座異常凹陷" },
+            { id: 35, question: "請問照片中有什麼缺失？", image: "35.jpg", options: ["插座異常凹陷", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接"], answer: "插座異常凹陷" },
+            { id: 36, question: "請問照片中有什麼缺失？", image: "36.jpg", options: ["插座異常凹陷", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接"], answer: "插座異常凹陷" },
+            { id: 37, question: "請問照片中有什麼缺失？", image: "37.jpg", options: ["插座護蓋脫落", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接"], answer: "插座護蓋脫落" },
+            { id: 38, question: "請問照片中有什麼缺失？", image: "38.jpg", options: ["插座護蓋損毀", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接"], answer: "插座護蓋損毀" },
+            { id: 39, question: "請問照片中有什麼缺失？", image: "39.jpg", options: ["插座護蓋脫落", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接"], answer: "插座護蓋脫落" },
+            { id: 40, question: "請問照片中有什麼缺失？", image: "40.jpg", options: ["插座異常凹陷且護蓋脫落", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接"], answer: "插座異常凹陷且護蓋脫落" },
+            { id: 41, question: "請問照片中有什麼缺失？", image: "41.jpg", options: ["插座異常凹陷", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接"], answer: "插座異常凹陷" },
+            { id: 42, question: "請問照片中有什麼缺失？", image: "42.jpg", options: ["電線破損有漏電疑慮及插座異常凹陷", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接", "無缺失"], answer: "電線破損有漏電疑慮及插座異常凹陷" },
+            { id: 43, question: "請問照片中有什麼缺失？", image: "43.jpg", options: ["開關護蓋脫落", "延長線積塵", "電線橫跨通道人員易絆倒跌倒", "不應使用多孔轉接"], answer: "開關護蓋脫落" },
+            { id: 44, question: "請問照片中有什麼缺失？", image: "44.jpg", options: ["插座護蓋脫落", "延長線積塵", "未張貼電器合格標籤", "不應使用多孔轉接"], answer: "插座護蓋脫落" },
+            { id: 45, question: "請問照片中有什麼缺失？", image: "45.jpg", options: ["插座護蓋脫落", "延長線積塵", "未張貼電器合格標籤", "不應使用多孔轉接"], answer: "插座護蓋脫落" },
+            { id: 46, question: "請問照片中有什麼缺失？", image: "46.jpg", options: ["插座積塵", "電線橫跨通道人員易絆倒跌倒", "未張貼電器合格標籤", "不應使用多孔轉接"], answer: "插座積塵" },
+            { id: 47, question: "請問照片中有什麼缺失？", image: "47.jpg", options: ["延長線積塵", "電線橫跨通道人員易絆倒跌倒", "未張貼電器合格標籤", "不應使用多孔轉接"], answer: "延長線積塵" },
+            { id: 48, question: "請問照片中有什麼缺失？", image: "48.jpg", options: ["自行以絕緣膠帶串接電線", "電線橫跨通道人員易絆倒跌倒", "未張貼電器合格標籤", "不應使用多孔轉接"], answer: "自行以絕緣膠帶串接電線" },
+            { id: 49, question: "請問照片中有什麼缺失？", image: "49.jpg", options: ["物料台車阻擋緊急排煙裝置按鈕", "物料直立擺放", "物料堆疊方式不正確", "物料堆疊過高"], answer: "物料台車阻擋緊急排煙裝置按鈕" },
+            { id: 50, question: "請問照片中有什麼缺失？", image: "50.jpg", options: ["鐵架阻擋緊急逃生門", "物料直立擺放", "物料堆疊方式不正確", "物料堆疊過高"], answer: "鐵架阻擋緊急逃生門" },
+            { id: 51, question: "請問照片中有什麼缺失？", image: "51.jpg", options: ["物料阻擋貨梯", "物料直立擺放", "物料堆疊方式不正確", "物料堆疊過高"], answer: "物料阻擋貨梯" },
+            { id: 52, question: "請問照片中有什麼缺失？", image: "52.jpg", options: ["物料阻擋通道", "物料直立擺放", "物料堆疊方式不正確", "物料堆疊過高"], answer: "物料阻擋通道" },
+            { id: 53, question: "請問照片中有什麼缺失？", image: "53.jpg", options: ["物料阻擋緊急排煙裝置", "物料直立擺放", "物料堆疊方式不正確", "物料堆疊過高"], answer: "物料阻擋緊急排煙裝置" },
+            { id: 54, question: "請問照片中有什麼缺失？", image: "54.jpg", options: ["物料阻擋通道", "物料直立擺放", "物料堆疊方式不正確", "物料堆疊過高"], answer: "物料阻擋通道" },
+            { id: 55, question: "請問照片中有什麼缺失？", image: "55.jpg", options: ["物料阻擋通道及消防設施", "物料直立擺放", "物料堆疊方式不正確", "物料堆疊過高"], answer: "物料阻擋通道及消防設施" },
+            { id: 56, question: "請問照片中有什麼缺失？", image: "56.jpg", options: ["物料阻擋消防設施", "物料直立擺放", "物料堆疊方式不正確", "物料堆疊過高"], answer: "物料阻擋消防設施" },
+            { id: 57, question: "請問照片中有什麼缺失？", image: "57.jpg", options: ["物料雜亂", "物料直立擺放", "無缺失", "物料堆疊過高"], answer: "物料雜亂" },
+            { id: 58, question: "請問照片中有什麼缺失？", image: "58.jpg", options: ["物料雜亂", "物料直立擺放", "無缺失", "物料堆疊過高"], answer: "物料雜亂" },
+            { id: 59, question: "請問照片中有什麼缺失？", image: "59.jpg", options: ["物料阻擋貨梯", "物料直立擺放", "物料堆疊方式不正確", "物料堆疊過高"], answer: "物料阻擋貨梯" },
+            { id: 60, question: "請問照片中有什麼缺失？", image: "60.jpg", options: ["物料雜亂", "物料直立擺放", "無缺失", "物料堆疊過高"], answer: "物料雜亂" },
+            { id: 61, question: "請問照片中有什麼缺失？", image: "61.jpg", options: ["物料堆放影響行走通道", "物料直立擺放", "無缺失", "物料堆疊過高"], answer: "物料堆放影響行走通道" },
+            { id: 62, question: "請問照片中有什麼缺失？", image: "62.jpg", options: ["物料阻擋電盤", "物料直立擺放", "物料堆疊方式不正確", "物料堆疊過高"], answer: "物料阻擋電盤" },
+            { id: 63, question: "請問照片中有什麼缺失？", image: "63.jpg", options: ["物料堆疊過高且阻擋電盤", "物料直立擺放", "無缺失", "物料阻擋消防設施"], answer: "物料堆疊過高且阻擋電盤" },
+            { id: 64, question: "請問照片中有什麼缺失？", image: "64.jpg", options: ["物料阻擋緊急沖淋設備", "物料直立擺放", "無缺失", "物料阻擋消防設施"], answer: "物料阻擋緊急沖淋設備" },
+            { id: 65, question: "請問照片中有什麼缺失？", image: "65.jpg", options: ["物料堆疊過高", "物料直立擺放", "無缺失", "物料阻擋消防設施"], answer: "物料堆疊過高" },
+            { id: 66, question: "請問照片中有什麼缺失？", image: "66.jpg", options: ["物料堆疊過高", "物料直立擺放", "無缺失", "物料阻擋消防設施"], answer: "物料堆疊過高" },
+            { id: 67, question: "請問照片中有什麼缺失？", image: "67.jpg", options: ["物料阻擋出入口", "物料直立擺放", "物料堆疊方式不正確", "物料阻擋消防設施"], answer: "物料阻擋出入口" },
+            { id: 68, question: "請問照片中有什麼缺失？", image: "68.jpg", options: ["物料阻擋緊急沖淋設備", "物料阻擋消防設施", "物料直立擺放", "物料堆疊方式不正確"], answer: "物料阻擋緊急沖淋設備" },
+            { id: 69, question: "請問照片中有什麼缺失？", image: "69.jpg", options: ["A字梯不可直立擺放", "物料阻擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "A字梯不可直立擺放" },
+            { id: 70, question: "請問照片中有什麼缺失？", image: "70.jpg", options: ["物料阻擋滅火器", "物料直立擺放", "無缺失", "物料阻擋緊急沖淋設備"], answer: "物料阻擋滅火器" },
+            { id: 71, question: "請問照片中有什麼缺失？", image: "71.jpg", options: ["棧板堆疊未全部固定且高度過高", "物料直立擺放", "無缺失", "物料阻擋緊急沖淋設備"], answer: "棧板堆疊未全部固定且高度過高" },
+            { id: 72, question: "請問照片中有什麼缺失？", image: "72.jpg", options: ["棧板不可直立擺放", "物料阻擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "棧板不可直立擺放" },
+            { id: 73, question: "請問照片中有什麼缺失？", image: "73.jpg", options: ["棧板不可直立擺放", "物料阻擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "棧板不可直立擺放" },
+            { id: 74, question: "請問照片中有什麼缺失？", image: "74.jpg", options: ["棧板阻擋消防設施", "物料直立擺放", "無缺失", "物料阻擋緊急沖淋設備"], answer: "棧板阻擋消防設施" },
+            { id: 75, question: "請問照片中有什麼缺失？", image: "75.jpg", options: ["物料阻擋貨梯且棧板不可直立擺放", "物料阻擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "物料阻擋貨梯且棧板不可直立擺放" },
+            { id: 76, question: "請問照片中有什麼缺失？", image: "76.jpg", options: ["棧板堆疊方式不正確", "物料阻擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "棧板堆疊方式不正確" },
+            { id: 77, question: "請問照片中有什麼缺失？", image: "77.jpg", options: ["堆疊棧板損壞", "物料阻擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "堆疊棧板損壞" },
+            { id: 78, question: "請問照片中有什麼缺失？", image: "78.jpg", options: ["物料堆疊方式不正確", "物料阻擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "物料堆疊方式不正確" },
+            { id: 79, question: "請問照片中有什麼缺失？", image: "79.jpg", options: ["物料堆疊過高", "物料阻擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "物料堆疊過高" },
+            { id: 80, question: "請問照片中有什麼缺失？", image: "80.jpg", options: ["棧板堆疊未固定", "物料阻擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "棧板堆疊未固定" },
+            { id: 81, question: "請問照片中有什麼缺失？", image: "81.jpg", options: ["物料堆疊過高", "物料阻擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "物料堆疊過高" },
+            { id: 82, question: "請問照片中有什麼缺失？", image: "82.jpg", options: ["物料不可直立擺放", "物料阻擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "物料不可直立擺放" },
+            { id: 83, question: "請問照片中有什麼缺失？", image: "83.jpg", options: ["棧板不可直立擺放", "物料優擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "棧板不可直立擺放" },
+            { id: 84, question: "請問照片中有什麼缺失？", image: "84.jpg", options: ["物料堆疊方式不正確", "物料阻擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "物料堆疊方式不正確" },
+            { id: 85, question: "請問照片中有什麼缺失？", image: "85.jpg", options: ["物料阻擋通道", "物料阻擋消防設施", "無缺失", "物料阻擋緊急沖淋設備"], answer: "物料阻擋通道" },
+            { id: 86, question: "請問照片中有什麼缺失？", image: "86.jpg", options: ["機車未依規定停放於車格內", "人員超出吸菸區吸菸", "人員邊走路邊滑手機", "人員在實驗室飲食"], answer: "機車未依規定停放於車格內" },
+            { id: 87, question: "請問照片中有什麼缺失？", image: "87.jpg", options: ["機車未依規定停放於車格內", "人員超出吸菸區吸菸", "人員邊走路邊滑手機", "人員在實驗室飲食"], answer: "機車未依規定停放於車格內" },
+            { id: 88, question: "請問照片中有什麼缺失？", image: "88.jpg", options: ["機車未依規定停放於車格內", "人員超出吸菸區吸菸", "人員邊走路邊滑手機", "人員在實驗室飲食"], answer: "機車未依規定停放於車格內" },
+            { id: 89, question: "請問照片中有什麼缺失？", image: "89.jpg", options: ["人員超出吸菸區吸菸", "機車未依規定停放於車格內", "人員邊走路邊滑手機", "人員在實驗室飲食"], answer: "人員超出吸菸區吸菸" },
+            { id: 90, question: "請問照片中有什麼缺失？", image: "90.png", options: ["人員超出吸菸區吸菸", "機車未依規定停放於車格內", "人員邊走路邊滑手機", "人員在實驗室飲食"], answer: "人員超出吸菸區吸菸" },
+            { id: 91, question: "請問照片中有什麼缺失？", image: "91.png", options: ["人員在非吸菸區吸菸", "機車未依規定停放於車格內", "人員邊走路邊滑手機", "人員在實驗室飲食"], answer: "人員在非吸菸區吸菸" },
+            { id: 92, question: "請問照片中有什麼缺失？", image: "92.png", options: ["人員邊走路邊滑手機", "機車未依規定停放於車格內", "人員在非吸菸區吸菸", "人員在實驗室飲食"], answer: "人員邊走路邊滑手機" },
+            { id: 93, question: "請問照片中有什麼缺失？", image: "93.png", options: ["人員邊走路邊滑手機", "機車未依規定停放於車格內", "人員在非吸菸區吸菸", "人員在實驗室飲食"], answer: "人員邊走路邊滑手機" },
+            { id: 94, question: "請問照片中有什麼缺失？", image: "94.png", options: ["人員邊走路邊滑手機", "機車未依規定停放於車格內", "人員在非吸菸區吸菸", "人員在實驗室飲食"], answer: "人員邊走路邊滑手機" },
+            { id: 95, question: "請問照片中有什麼缺失？", image: "95.png", options: ["人員邊走路邊滑手機", "機車未依規定停放於車格內", "人員在非吸菸區吸菸", "人員在實驗室飲食"], answer: "人員邊走路邊滑手機" },
+            { id: 96, question: "請問照片中有什麼缺失？", image: "96.png", options: ["人員邊走路邊滑手機", "機車未依規定停放於車格內", "人員在非吸菸區吸菸", "人員在實驗室飲食"], answer: "人員邊走路邊滑手機" },
+            { id: 97, question: "請問照片中有什麼缺失？", image: "97.png", options: ["人員在實驗室飲食", "機車未依規定停放於車格內", "人員在非吸菸區吸菸", "人員邊走路邊滑手機"], answer: "人員在實驗室飲食" },
+            { id: 98, question: "請問照片中有什麼缺失？", image: "98.jpg", options: ["人員在實驗室飲食", "機車未依規定停放於車格內", "人員在非吸菸區吸菸", "人員邊走路邊滑手機"], answer: "人員在實驗室飲食" },
+            { id: 99, question: "請問照片中有什麼缺失？", image: "99.png", options: ["人員在調膠室飲食", "機車未依規定停放於車格內", "人員在非吸菸區吸菸", "人員邊走路邊滑手機"], answer: "人員在調膠室飲食" },
+            { id: 100, question: "請問照片中有什麼缺失？", image: "100.png", options: ["人員在化學品存放區飲食", "機車未依規定停放於車格內", "人員在非吸菸區吸菸", "人員邊走路邊滑手機"], answer: "人員在化學品存放區飲食" }
+        );
     }
 
-const fullQuizData = [
- {
-    question: "請問照片中有什麼缺失？",
-    image: "https://app1107-images.netlify.app/1.jpg",
-    options: ["擠壓瓶GHS髒污無法辨識", "滅火器遭阻擋", "插座髒污", "電器合格標籤過期"],
-    answer: "滅火器遭阻擋"
-  },
-  {
-    question: "請問照片中有什麼缺失？",
-    image: "https://app1107-images.netlify.app/2.jpg",
-    options: ["擠壓瓶GHS髒污無法辨識", "滅火器遭阻擋", "插座髒污", "電器合格標籤過期"],
-    answer: "擠壓瓶GHS髒污無法辨識"
-  },
-  {
-    question: "請問照片中有什麼缺失？",
-    image: "https://app1107-images.netlify.app/3.jpg",
-    options: ["擠壓瓶GHS髒污無法辨識", "滅火器遭阻擋", "插座髒污", "電器合格標籤過期"],
-    answer: "電器合格標籤過期"
-  },
-  {
-    question: "請問照片中有什麼缺失？",
-    image: "https://app1107-images.netlify.app/4.jpg",
-    options: ["擠壓瓶GHS髒污無法辨識", "滅火器遭阻擋", "插座髒污", "電器合格標籤過期"],
-    answer: "插座髒污"
-  },
-  {
-    question: "請問照片中有什麼缺失？",
-    image: "https://app1107-images.netlify.app/5.jpg",
-    options: ["鋼瓶不正確固定", "鋼瓶未使用未蓋鋼瓶帽", "鋼瓶SDS過期", "無缺失"],
-    answer: "鋼瓶不正確固定"
-  },
-  {
-    question: "請問照片中有什麼缺失？",
-    image: "https://app1107-images.netlify.app/6.jpg",
-    options: ["鋼瓶不正確固定", "鋼瓶未使用未蓋鋼瓶帽", "鋼瓶SDS過期", "無缺失"],
-    answer: "鋼瓶未使用未蓋鋼瓶帽"
-  },
-  {
-    question: "請問照片中有什麼缺失？",
-    image: "https://app1107-images.netlify.app/7.jpg",
-    options: ["緊急出口動線遭阻", "緊急出口燈未亮", "緊急出口未標示", "無缺失"],
-    answer: "緊急出口動線遭阻"
-  },
-  {
-    question: "請問照片中有什麼缺失？",
-    image: "https://app1107-images.netlify.app/8.jpg",
-    options: ["緊急出口動線遭阻", "緊急出口燈未亮", "緊急出口未標示", "無缺失"],
-    answer: "緊急出口燈未亮"
-  },
-  {
-    question: "請問照片中有什麼缺失？",
-    image: "https://app1107-images.netlify.app/9.jpg",
-    options: ["緊急沖身區故障", "緊急沖身區不應堆放雜物", "緊急沖身區未點檢", "無缺失"],
-    answer: "緊急沖身區不應堆放雜物"
-  },
-  {
-    question: "請問照片中有什麼缺失？",
-    image: "https://app1107-images.netlify.app/10.jpg",
-    options: ["緊急排煙裝置按鈕故障", "緊急排煙裝置按鈕遭阻擋", "緊急排煙裝置按鈕未設置", "無缺失"],
-    answer: "緊急排煙裝置按鈕遭阻擋"
-  }
-];
+    // --- 變數定義 ---
     let siteValue = null;
     let employeeId = null;
+    let userName = null;
     let currentQuestionIndex = 0;
     let score = 0;
-    const QUESTIONS_PER_SESSION = 5;
+    const TOTAL_SESSIONS = 10;
     let sessionQuestions = [];
     let startTime = null;
 
+    // --- 工具函式 ---
+    function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+
+    function pickQuestions() {
+        const pool1 = fullQuizData.slice(0, 22);
+        const pool2 = fullQuizData.slice(22, 48);
+        const pool3 = fullQuizData.slice(48, 85);
+        const pool4 = fullQuizData.slice(85, 100);
+
+        const selected = [
+            ...shuffle(pool1).slice(0, 2),
+            ...shuffle(pool2).slice(0, 3),
+            ...shuffle(pool3).slice(0, 3),
+            ...shuffle(pool4).slice(0, 2)
+        ];
+        return shuffle(selected);
+    }
+
+    // --- 流程控制 ---
     function startQuiz() {
         const siteRadio = document.querySelector("input[name='site']:checked");
-        const idValue = document.getElementById('employee-id').value.trim();
+        const idInput = document.getElementById('employee-id').value.trim();
+        const nameInput = document.getElementById('user-name').value.trim();
 
         if (!siteRadio) return alert("請選擇廠區");
-        if (!idValue || isNaN(idValue)) return alert("請輸入有效工號");
+        if (!idInput) return alert("請輸入工號");
+        if (!nameInput) return alert("請輸入姓名");
 
         siteValue = siteRadio.value;
-        employeeId = idValue;
+        employeeId = idInput;
+        userName = nameInput;
 
         document.getElementById('id-container').classList.add('hidden');
         resetQuiz();
     }
 
+    function resetQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        sessionQuestions = pickQuestions();
+        startTime = new Date();
+        document.getElementById('quiz-container').classList.remove('hidden');
+        document.getElementById('result-container').classList.add('hidden');
+        loadQuestion();
+    }
+
     function loadQuestion() {
-        if (currentQuestionIndex >= QUESTIONS_PER_SESSION) {
+        if (currentQuestionIndex >= TOTAL_SESSIONS) {
             showResult();
             return;
         }
 
         const q = sessionQuestions[currentQuestionIndex];
-        const shuffled = shuffleArray(q.options);
+        const shuffledOptions = shuffle([...q.options]);
 
-        document.getElementById('question-text').textContent =
-            `${currentQuestionIndex + 1}. ${q.question}`;
+        document.getElementById('question-number-display').textContent = `[ 原始題號: ${q.id} ]`;
+        document.getElementById('question-text').textContent = q.question;
         document.getElementById('question-image').src = q.image;
-        document.getElementById('progress-text').textContent =
-            `問題 ${currentQuestionIndex + 1} / ${QUESTIONS_PER_SESSION}`;
-        document.getElementById('score-text').textContent = `分數: ${score}`;
+        document.getElementById('progress-text').textContent = `進度: ${currentQuestionIndex + 1} / ${TOTAL_SESSIONS}`;
+        document.getElementById('score-text').textContent = `目前分數: ${score}`;
 
-        const opt = document.getElementById('options-container');
-        opt.innerHTML = '';
+        const optContainer = document.getElementById('options-container');
+        optContainer.innerHTML = '';
 
-        shuffled.forEach(option => {
+        shuffledOptions.forEach(option => {
             const btn = document.createElement('button');
             btn.textContent = option;
-            btn.className = 'w-full bg-indigo-500 text-white text-lg font-semibold py-3 rounded-lg';
+            btn.className = 'w-full bg-indigo-500 hover:bg-indigo-600 text-white text-lg font-semibold py-3 rounded-lg transition shadow-md';
             btn.onclick = () => checkAnswer(option, btn);
-            opt.appendChild(btn);
+            optContainer.appendChild(btn);
         });
     }
 
-    function showModal(title, message, success = true) {
+    function checkAnswer(selected, button) {
+        const q = sessionQuestions[currentQuestionIndex];
+        const isCorrect = (selected === q.answer);
+        const btns = document.getElementById('options-container').children;
+        for(let b of btns) b.disabled = true;
+
+        if (isCorrect) {
+            score++;
+            button.classList.replace('bg-indigo-500', 'bg-green-500');
+            showModal("恭喜！", "答案正確！", true);
+        } else {
+            button.classList.replace('bg-indigo-500', 'bg-red-500');
+            for(let b of btns) {
+                if(b.textContent === q.answer) b.classList.replace('bg-indigo-500', 'bg-green-500');
+            }
+            showModal("可惜", `正確答案是：${q.answer}`, false);
+        }
+    }
+
+    function showModal(title, message, isSuccess) {
         const modal = document.getElementById("message-modal");
-        const modalTitle = document.getElementById("modal-title");
-        const modalMessage = document.getElementById("modal-message");
-
-        modalTitle.textContent = title;
-        modalMessage.textContent = message;
-
-        modalTitle.classList.remove("text-green-600", "text-red-600");
-        modalTitle.classList.add(success ? "text-green-600" : "text-red-600");
-
+        const t = document.getElementById("modal-title");
+        t.textContent = title;
+        t.className = `text-xl font-bold mb-3 text-center ${isSuccess ? 'text-green-600' : 'text-red-600'}`;
+        document.getElementById("modal-message").textContent = message;
         modal.classList.remove("hidden");
     }
 
-    document.getElementById("modal-ok").onclick = function () {
+    document.getElementById("modal-ok").onclick = () => {
         document.getElementById("message-modal").classList.add("hidden");
         currentQuestionIndex++;
         loadQuestion();
     };
 
-    function checkAnswer(selectedOption, button) {
-        const optionsContainer = document.getElementById('options-container');
-        const currentQuestion = sessionQuestions[currentQuestionIndex];
-        const isCorrect = selectedOption === currentQuestion.answer;
-
-        Array.from(optionsContainer.children).forEach(btn => btn.disabled = true);
-
-        if (isCorrect) {
-            score++;
-            button.classList.add('bg-green-500');
-            showModal("恭喜！", "答案正確！", true);
-        } else {
-            button.classList.add('bg-red-500');
-            Array.from(optionsContainer.children).forEach(btn => {
-                if (btn.textContent === currentQuestion.answer) btn.classList.add("bg-green-500");
-            });
-            showModal("錯誤", `正確答案是：${currentQuestion.answer}`, false);
-        }
-    }
-
-    function formatTimestampASCII() {
-        const now = new Date();
-        return (
-            now.getFullYear() + "-" +
-            String(now.getMonth() + 1).padStart(2, "0") + "-" +
-            String(now.getDate()).padStart(2, "0") + " " +
-            String(now.getHours()).padStart(2, "0") + ":" +
-            String(now.getMinutes()).padStart(2, "0") + ":" +
-            String(now.getSeconds()).padStart(2, "0")
-        );
-    }
-
     function showResult() {
-        const end = new Date();
-        const secondsUsed = Math.round((end - startTime) / 1000);
-
+        const duration = Math.round((new Date() - startTime) / 1000);
         document.getElementById('quiz-container').classList.add('hidden');
         document.getElementById('result-container').classList.remove('hidden');
 
-        document.getElementById('final-message').textContent = "測驗完成！";
-            // 新增：顯示廠區、工號
-    document.getElementById('final-site').textContent = `廠區：${siteValue}`;
-    document.getElementById('final-id').textContent = `工號：${employeeId}`;
-        document.getElementById('final-score-text').textContent = `最終分數：${score}`;
-        document.getElementById('time-spent-text').textContent = `使用秒數：${secondsUsed} 秒`;
+        document.getElementById('final-site').textContent = `廠區：${siteValue}`;
+        document.getElementById('final-id').textContent = `工號：${employeeId}`;
+        document.getElementById('final-name').textContent = `姓名：${userName}`;
+        document.getElementById('final-score-text').textContent = `最終得分：${score} / ${TOTAL_SESSIONS}`;
+        document.getElementById('time-spent-text').textContent = `總共耗時：${duration} 秒`;
 
         const form = document.forms['quiz-results'];
         form.site.value = siteValue;
         form.employee_id.value = employeeId;
+        form.user_name.value = userName;
         form.score.value = score;
-        form.time_spent.value = secondsUsed;
-        form.timestamp.value = formatTimestampASCII();
+        form.time_spent.value = duration;
+        form.timestamp.value = new Date().toLocaleString();
 
         fetch("https://api.ipify.org?format=json")
             .then(r => r.json())
@@ -298,24 +386,7 @@ const fullQuizData = [
                 });
             });
     }
-
-    function resetQuiz() {
-        currentQuestionIndex = 0;
-        score = 0;
-        sessionQuestions = shuffleArray(fullQuizData).slice(0, QUESTIONS_PER_SESSION);
-
-        startTime = new Date();
-        document.getElementById('quiz-container').classList.remove('hidden');
-        document.getElementById('result-container').classList.add('hidden');
-
-        loadQuestion();
-    }
 </script>
 
 </body>
 </html>
-
-
-
-
-
