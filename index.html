@@ -355,39 +355,53 @@
         currentQuestionIndex++;
         loadQuestion();
     };
-
 function showResult() {
-        const duration = Math.round((new Date() - startTime) / 1000);
-        document.getElementById('quiz-container').classList.add('hidden');
-        document.getElementById('result-container').classList.remove('hidden');
+    const duration = ((new Date() - startTime) / 1000).toFixed(3);
+    document.getElementById('quiz-container').classList.add('hidden');
+    document.getElementById('result-container').classList.remove('hidden');
 
-        document.getElementById('final-site').textContent = `廠區：${siteValue}`;
-        document.getElementById('final-id').textContent = `工號：${employeeId}`;
-        document.getElementById('final-name').textContent = `姓名：${userName}`;
-        document.getElementById('final-score-text').textContent = `最終得分：${score} / ${TOTAL_SESSIONS}`;
-        document.getElementById('time-spent-text').textContent = `總共耗時：${duration} 秒`;
+    document.getElementById('final-site').textContent = `廠區：${siteValue}`;
+    document.getElementById('final-id').textContent = `工號：${employeeId}`;
+    document.getElementById('final-name').textContent = `姓名：${userName}`;
+    document.getElementById('final-score-text').textContent = `最終得分：${score} / ${TOTAL_SESSIONS}`;
+    document.getElementById('time-spent-text').textContent = `總共耗時：${duration} 秒`;
 
+    // 準備要傳送的資料
+    const timestamp = new Date().toLocaleString();
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx90voTiMa3qVezl8naCGD5ISczft79O0HrUl0gd6aCXtxZzB4CFs5Kw6r7eTjma8BgmQ/exec';
 
-        const form = document.forms['quiz-results'];
-        form.site.value = siteValue;
-        form.employee_id.value = employeeId;
-        form.user_name.value = userName;
-        form.score.value = score;
-        form.time_spent.value = duration;
-        form.timestamp.value = new Date().toLocaleString();
+    fetch("https://api.ipify.org?format=json")
+        .then(r => r.json())
+        .then(data => {
+            const ip = data.ip;
 
-        fetch("https://api.ipify.org?format=json")
-            .then(r => r.json())
-            .then(data => form.ip.value = data.ip)
-            .finally(() => {
-                fetch("/", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: new URLSearchParams(new FormData(form)).toString(),
-                });
+            // 使用 URLSearchParams 格式傳送
+            const formData = new URLSearchParams();
+            formData.append('site', siteValue);
+            formData.append('employee_id', employeeId);
+            formData.append('user_name', userName);
+            formData.append('score', score);
+            formData.append('time_spent', duration);
+            formData.append('timestamp', timestamp);
+            formData.append('ip', ip);
+
+            return fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData.toString()
             });
+        })
+        .then(() => {
+            console.log('資料已送出 (請確認試算表是否有增加新行)');
+        })
+        .catch(error => {
+            console.error('傳送過程中發生錯誤：', error);
+        });
     }
 </script>
+</body>
+</html>
 
 </body>
 </html>
